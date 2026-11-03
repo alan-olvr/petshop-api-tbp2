@@ -1,12 +1,14 @@
 # Importe aqui TODOS os models para o Alembic (autogenerate) enxergá-los.
-from app.models.base import Base  # noqa: F401
+from app.models.base import Base  
 
 # Membro A
-# from app.models.tutor import Tutor  # noqa: F401
-# from app.models.animal import Animal  # noqa: F401
-# from app.models.microchip import Microchip  # noqa: F401
-# from app.models.historico_tutela import HistoricoTutela  # noqa: F401
-# from app.models.veterinario import Veterinario  # noqa: F401
+from app.models.tutor import Tutor  
+from app.models.animal import Animal 
+from app.models.microchip import Microchip  
+from app.models.historico_tutela import HistoricoTutela  
+from app.models.veterinario import Veterinario  
+
+__all__ = ["Base", "Tutor", "Animal", "Microchip", "HistoricoTutela", "Veterinario"]
 
 # Membro B
 # from app.models.servico import Servico  # noqa: F401
