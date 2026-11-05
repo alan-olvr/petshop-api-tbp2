@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 
 from app.errors import register_error_handlers
+from app.routers import tutor, animal
 
-app = FastAPI(title="Pet Shop / Clínica Veterinária", version="0.1.0")
+app = FastAPI(title="PetShop API")
 register_error_handlers(app)
+app.include_router(tutor.router)
+app.include_router(animal.router)
 
 # Registre os routers aqui conforme forem criados:
 # from app.routers import tutor, animal
