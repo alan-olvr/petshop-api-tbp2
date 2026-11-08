@@ -11,6 +11,8 @@ from app.models.veterinario import Veterinario
 __all__ = ["Base", "Tutor", "Animal", "Microchip", "HistoricoTutela", "Veterinario"]
 
 # Membro B
-# from app.models.servico import Servico  # noqa: F401
-# from app.models.atendimento import Atendimento, AtendimentoServico  # noqa: F401
-# from app.models.vacina import Vacina, AplicacaoVacina  # noqa: F401
+from app.models.servico import Servico
+from app.models.atendimento import Atendimento, AtendimentoServico
+from app.models.vacina import Vacina, AplicacaoVacina
+
+__all__.extend(["Servico", "Atendimento", "AtendimentoServico", "Vacina", "AplicacaoVacina"])
