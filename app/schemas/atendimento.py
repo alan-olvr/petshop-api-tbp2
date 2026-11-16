@@ -17,7 +17,7 @@ class AtendimentoServicoSaida(BaseModel):
 
 class AtendimentoEntrada(BaseModel):
     situacao: str = Field(min_length=3, max_length=255)
-    orientacao: Optional[str] = Field(default=None, max_length=500)
+    orientacoes: Optional[str] = Field(default=None, max_length=500)
     animal_id: int
     veterinario_id: int
     tutor_id_epoca: int
@@ -34,4 +34,8 @@ class AtendimentoSaida(BaseModel):
     veterinario_id: int
     tutor_id_epoca: int
     servicos: list[AtendimentoServicoSaida]
-    
+
+class AtendimentoAtualizacao(BaseModel):
+    situacao: Optional[str] = Field(default=None, min_length=3, max_length=255)
+    orientacoes: Optional[str] = Field(default=None, max_length=500)
+    veterinario_id: Optional[int] = None
