@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
-from app.models import Tutor
+from app.models import Tutor, Animal
 from app.schemas.comum import Pagina
 from app.schemas.tutor import TutorAtualizacao, TutorEntrada, TutorSaida
+from app.schemas.animal import AnimalSaida
 from app.errors import RegraNegocioError
 
 router = APIRouter(prefix="/tutor", tags=["Tutores"])
@@ -86,3 +87,30 @@ def excluir_tutor(tutor_id: int, db: Session = Depends(get_db)):
     db.delete(tutor)
     db.commit()
     return Response(status_code=204)
+
+@router.get("/{tutor_id}/animais", response_model=Pagina[AnimalSaida])
+def listar_animais_do_tutor(
+    tutor_id: int,
+    ativo: bool | None = None,
+    offset: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+    db: Session = Depends(get_db),
+):
+    obter_tutor_ou_404(db, tutor_id)
+
+    filtros = [Animal.tutor_id == tutor_id]
+    if ativo is not None:
+        filtros.append(Animal.ativo == ativo)
+
+    total = db.scalar(select(func.count()).select_from(Animal).where(*filtros))
+    itens = db.scalars(
+        select(Animal)
+        .options(joinedload(Animal.tutor), joinedload(Animal.microchip))
+        .where(*filtros)
+        .order_by(Animal.nome, Animal.id)
+        .offset(offset)
+        .limit(limit)
+    ).all()
+    return {"total": total, "offset": offset, "limit": limit, "itens": itens}
+
+

@@ -9,6 +9,7 @@ from app.errors import RegraNegocioError
 from app.models import Animal, HistoricoTutela, Tutor
 from app.schemas.animal import AnimalAtualizacao, AnimalEntrada, AnimalSaida
 from app.schemas.comum import Pagina
+from app.schemas.tutela import TransferenciaTutela, TutelaSaida
 
 router = APIRouter(prefix="/animais", tags=["Animais"])
 
@@ -99,3 +100,61 @@ def desativar_animal(animal_id: int, db: Session = Depends(get_db)):
     animal.ativo = False
     db.commit()
     return Response(status_code=204)
+
+def carregar_tutela(db: Session, tutela_id: int) -> HistoricoTutela:
+    return db.scalar(
+        select(HistoricoTutela)
+        .options(joinedload(HistoricoTutela.tutor))
+        .where(HistoricoTutela.id == tutela_id)
+        .execution_options(populate_existing=True)
+    )
+
+@router.post("/{animal_id}/transferir-tutela/", response_model=TutelaSaida, status_code=201)
+def transferir_tutela(animal_id: int, data: TransferenciaTutela, db: Session = Depends(get_db)):
+    animal = obter_animal(db, animal_id)
+
+    if not animal.ativo:
+        raise RegraNegocioError("Não é possível transferir a tutela de um animal inativo")
+    if data.novo_tutor_id == animal.tutor_id:
+        raise RegraNegocioError("O animal já está sob a tutela deste tutor")
+    novo_tutor = obter_tutor(db, data.novo_tutor_id)  # 404 se não existe, 409 se inativo
+
+    vigente = db.scalar(
+        select(HistoricoTutela).where(
+            HistoricoTutela.animal_id == animal.id,
+            HistoricoTutela.data_fim.is_(None),
+        )
+    )
+    if vigente is None:
+        raise RegraNegocioError("Animal sem vínculo de tutela vigente: dados inconsistentes")
+
+    data_transf = data.data_transferencia or date.today()
+    if data_transf < vigente.data_inicio:
+        raise RegraNegocioError(
+            "A data da transferência não pode ser anterior ao início do vínculo atual",
+            status_code=400,
+        )
+
+    vigente.data_fim = data_transf
+    db.flush() 
+    novo = HistoricoTutela(
+        animal_id=animal.id,
+        tutor_id=novo_tutor.id,
+        data_inicio=data_transf,
+        motivo=data.motivo,
+    )
+    db.add(novo)
+    animal.tutor_id = novo_tutor.id
+    db.commit()
+
+    return carregar_tutela(db, novo.id)
+
+@router.get("/{animal_id}/tutelas", response_model=list[TutelaSaida])
+def listar_tutelas(animal_id: int, db: Session = Depends(get_db)):
+    obter_animal(db, animal_id)
+    return db.scalars(
+        select(HistoricoTutela)
+        .options(joinedload(HistoricoTutela.tutor))
+        .where(HistoricoTutela.animal_id == animal_id)
+        .order_by(HistoricoTutela.data_inicio, HistoricoTutela.id)
+    ).all()
