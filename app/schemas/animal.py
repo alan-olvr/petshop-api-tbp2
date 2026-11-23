@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Annotated, Literal
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, model_validator, Field
 
 from app.schemas.tutor import Texto
 
@@ -16,6 +16,7 @@ Sexo = Literal["M", "F"]
 class AnimalEntrada(BaseModel):
     nome: Texto
     especie: Texto
+    peso_kg: float | None = Field(default=None, gt=0, le=200, description="Peso em kg")
     raca: Texto | None = None
     sexo: Sexo
     data_nasc_aprox: DataNascimento | None = None
@@ -27,6 +28,7 @@ class AnimalAtualizacao(BaseModel):
 
     nome: Texto | None = None
     especie: Texto | None = None  
+    peso_kg: float | None = Field(default=None, gt=0, le=200)
     raca: Texto | None = None
     sexo: Sexo | None = None
     data_nasc_aprox: DataNascimento | None = None
@@ -55,6 +57,7 @@ class AnimalSaida(BaseModel):
     id: int
     nome: str
     especie: str
+    peso_kg: float | None
     raca: str
     sexo: str
     data_nasc_aprox: date | None

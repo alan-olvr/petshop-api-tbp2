@@ -22,7 +22,6 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         render_as_batch=IS_SQLITE,
-        compare_type=True,
     )
     with context.begin_transaction():
         context.run_migrations()

@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy import Boolean, CheckConstraint, Date, ForeignKey, String
+from sqlalchemy import Boolean, CheckConstraint, Date, ForeignKey, String, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -13,6 +13,7 @@ class Animal(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     nome: Mapped[str] = mapped_column(String(120), index=True)
+    peso_kg: Mapped[float | None] = mapped_column(Float, nullable=True)
     especie: Mapped[str] = mapped_column(String(60), index=True)
     raca: Mapped[str] = mapped_column(String(60))
     sexo: Mapped[str] = mapped_column(String(1))
