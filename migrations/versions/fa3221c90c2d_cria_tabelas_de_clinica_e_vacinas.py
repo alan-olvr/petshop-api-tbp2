@@ -25,7 +25,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(length=120), nullable=False),
     sa.Column('valor_padrao', sa.Numeric(precision=10, scale=2), nullable=False),
-    sa.Column('ativo', sa.Boolean(), server_default='1', nullable=False),
+    sa.Column('ativo', sa.Boolean(), server_default=sa.true(), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_servicos'))
     )
     with op.batch_alter_table('servicos', schema=None) as batch_op:
@@ -36,7 +36,7 @@ def upgrade() -> None:
     sa.Column('nome', sa.String(length=120), nullable=False),
     sa.Column('fabricante', sa.String(length=120), nullable=False),
     sa.Column('dias_reforco', sa.Integer(), nullable=False),
-    sa.Column('ativo', sa.Boolean(), server_default='1', nullable=False),
+    sa.Column('ativo', sa.Boolean(), server_default=sa.true(), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_vacinas'))
     )
     with op.batch_alter_table('vacinas', schema=None) as batch_op:
