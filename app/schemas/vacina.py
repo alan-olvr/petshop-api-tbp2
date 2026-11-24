@@ -25,7 +25,7 @@ class VacinaSaida(BaseModel):
 
 class AplicacaoVacinaEntrada(BaseModel):
     data_prevista: date
-    status: Literal["Prevista", "Aplicada"] = "Prevista"
+    status: Literal["prevista", "aplicada"] = "prevista"
     animal_id: int
     vacina_id: int
     veterinario_id: Optional[int] = None
@@ -33,10 +33,10 @@ class AplicacaoVacinaEntrada(BaseModel):
     data_aplicacao: Optional[date] = None
     @model_validator(mode="after")
     def validar_status_e_data(self):
-        if self.status == "Aplicada" and self.data_aplicacao is None:
-            raise ValueError("A data de aplicação deve ser fornecida quando o status for 'Aplicada'.")
-        if self.status == "Prevista" and self.data_aplicacao is not None:
-            raise ValueError("A data de aplicação não deve ser fornecida quando o status for 'Prevista'.")
+        if self.status == "aplicada" and self.data_aplicacao is None:
+            raise ValueError("A data de aplicação deve ser fornecida quando o status for 'aplicada'.")
+        if self.status == "prevista" and self.data_aplicacao is not None:
+            raise ValueError("A data de aplicação não deve ser fornecida quando o status for 'prevista'.")
         return self
 
 
@@ -44,7 +44,7 @@ class AplicacaoVacinaAtualizacao(BaseModel):
     dose: Optional[int] = Field(default=None, ge=1)
     data_prevista: Optional[date] = None
     data_aplicacao: Optional[date] = None
-    status: Optional[Literal["Prevista", "Aplicada"]] = None
+    status: Optional[Literal["prevista", "aplicada"]] = None
     veterinario_id: Optional[int] = None
 
 class AplicacaoVacinaSaida(BaseModel):
@@ -54,7 +54,7 @@ class AplicacaoVacinaSaida(BaseModel):
     dose: int
     data_prevista: date
     data_aplicacao: Optional[date]
-    status: Literal["Prevista", "Aplicada"]
+    status: Literal["prevista", "aplicada"]
     animal_id: int
     vacina_id: int
     veterinario_id: Optional[int]

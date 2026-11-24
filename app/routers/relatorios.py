@@ -158,7 +158,7 @@ def relatorio_animais_sem_vacina_aplicada(db: Session = Depends(get_db)):
             AplicacaoVacina,
             and_(
                 Animal.id == AplicacaoVacina.animal_id,
-                AplicacaoVacina.status == "Aplicada",
+                AplicacaoVacina.status == "aplicada",
             ),
         )
         .where(AplicacaoVacina.id.is_(None))

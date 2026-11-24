@@ -109,7 +109,7 @@ def carregar_tutela(db: Session, tutela_id: int) -> HistoricoTutela:
         .execution_options(populate_existing=True)
     )
 
-@router.post("/{animal_id}/transferir-tutela/", response_model=TutelaSaida, status_code=201)
+@router.post("/{animal_id}/transferir-tutela", response_model=TutelaSaida, status_code=201)
 def transferir_tutela(animal_id: int, data: TransferenciaTutela, db: Session = Depends(get_db)):
     animal = obter_animal(db, animal_id)
 

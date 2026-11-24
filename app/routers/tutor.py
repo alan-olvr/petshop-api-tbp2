@@ -9,7 +9,7 @@ from app.schemas.tutor import TutorAtualizacao, TutorEntrada, TutorSaida
 from app.schemas.animal import AnimalSaida
 from app.errors import RegraNegocioError
 
-router = APIRouter(prefix="/tutor", tags=["Tutores"])
+router = APIRouter(prefix="/tutores", tags=["Tutores"])
 
 def obter_tutor_ou_404(db: Session, tutor_id: int) -> Tutor:
     tutor = db.get(Tutor, tutor_id)

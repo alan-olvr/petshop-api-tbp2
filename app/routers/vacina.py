@@ -91,7 +91,7 @@ def listar_vacinacoes_pendentes(
     animal_id: Optional[int] = Query(None, description="Filtrar pendências de um animal específico"),
     db: Session = Depends(get_db),
 ):
-    query = select(AplicacaoVacina).where(AplicacaoVacina.status == "Prevista")
+    query = select(AplicacaoVacina).where(AplicacaoVacina.status == "prevista")
 
     if animal_id:
         query = query.where(AplicacaoVacina.animal_id == animal_id)
@@ -102,7 +102,7 @@ def listar_vacinacoes_pendentes(
 
 @router.get("/vacinacoes", response_model=list[AplicacaoVacinaSaida])
 def listar_vacinacoes(
-    status_vacina: Optional[Literal["Prevista", "Aplicada"]] = Query(
+    status_vacina: Optional[Literal["prevista", "aplicada"]] = Query(
         None, alias="status"
     ),
     animal_id: Optional[int] = Query(None),
@@ -171,7 +171,7 @@ def registrar_aplicacao_vacina(dados: AplicacaoVacinaEntrada, db: Session = Depe
                 AplicacaoVacina.dose == dados.dose - 1,
             )
         )
-        if not dose_anterior or dose_anterior.status != "Aplicada" or not dose_anterior.data_aplicacao:
+        if not dose_anterior or dose_anterior.status != "aplicada" or not dose_anterior.data_aplicacao:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"A dose {dados.dose - 1} precisa ter sido aplicada antes de registrar a dose {dados.dose}."
@@ -193,7 +193,7 @@ def registrar_aplicacao_vacina(dados: AplicacaoVacinaEntrada, db: Session = Depe
     return nova_aplicacao
 
 
-# Dar baixa em uma dose "Prevista" para "Aplicada"
+# Dar baixa em uma dose "prevista" para "aplicada"
 @router.patch("/vacinacoes/{aplicacao_id}", response_model=AplicacaoVacinaSaida)
 def atualizar_aplicacao_vacina(
     aplicacao_id: int,

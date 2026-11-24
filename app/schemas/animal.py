@@ -1,35 +1,48 @@
 from datetime import date
 from typing import Annotated, Literal
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, model_validator, Field
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    model_validator,
+)
 
 from app.schemas.tutor import Texto
+
+Texto60 = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=60)]
+
 
 def _nao_futura(valor: date) -> date:
     if valor > date.today():
         raise ValueError("A data de nascimento não pode estar no futuro")
-    return valor 
+    return valor
+
 
 DataNascimento = Annotated[date, AfterValidator(_nao_futura)]
 Sexo = Literal["M", "F"]
 
+
 class AnimalEntrada(BaseModel):
     nome: Texto
-    especie: Texto
+    especie: Texto60
     peso_kg: float | None = Field(default=None, gt=0, le=200, description="Peso em kg")
-    raca: Texto | None = None
+    raca: Texto60
     sexo: Sexo
     data_nasc_aprox: DataNascimento | None = None
     ativo: bool = True
     tutor_id: int
 
+
 class AnimalAtualizacao(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     nome: Texto | None = None
-    especie: Texto | None = None  
+    especie: Texto60 | None = None
     peso_kg: float | None = Field(default=None, gt=0, le=200)
-    raca: Texto | None = None
+    raca: Texto60 | None = None
     sexo: Sexo | None = None
     data_nasc_aprox: DataNascimento | None = None
     ativo: bool | None = None
@@ -40,16 +53,19 @@ class AnimalAtualizacao(BaseModel):
             raise ValueError("Não envie campos nulos")
         return self
 
+
 class TutorResumo(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     nome: str
 
+
 class MicrochipResumo(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     numero: str
+
 
 class AnimalSaida(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -64,4 +80,4 @@ class AnimalSaida(BaseModel):
     ativo: bool
     tutor_id: int
     tutor: TutorResumo
-    microchip: MicrochipResumo | None = None    
+    microchip: MicrochipResumo | None = None

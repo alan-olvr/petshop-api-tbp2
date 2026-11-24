@@ -1,10 +1,9 @@
 from typing import Annotated
 
 from pydantic import (
-    BaseModel, 
+    BaseModel,
     ConfigDict,
     EmailStr,
-    Field,
     StringConstraints,
     model_validator,
 )
@@ -19,10 +18,11 @@ class TutorEntrada(BaseModel):
     ativo: bool = True
 
 class TutorAtualizacao(BaseModel):
-    nome: Texto
-    telefone: Telefone
+    model_config = ConfigDict(extra="forbid")
+    nome: Texto | None = None
+    telefone: Telefone | None = None
     email: EmailStr | None = None
-    ativo: bool = True
+    ativo: bool | None = None
 
     @model_validator(mode="after")
     def nao_permitir_nulos(self):
@@ -30,11 +30,11 @@ class TutorAtualizacao(BaseModel):
             raise ValueError("Não envie campos nulos")
         return self
 
+
 class TutorSaida(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-
     id: int
     nome: str
     telefone: str
-    email: str 
+    email: str
     ativo: bool
