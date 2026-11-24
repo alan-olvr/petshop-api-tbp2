@@ -16,8 +16,11 @@ class Atendimento(Base):
     veterinario_id: Mapped[int] = mapped_column(ForeignKey("veterinarios.id", ondelete="RESTRICT"), index=True)
     tutor_id_epoca: Mapped[int] = mapped_column(ForeignKey("tutores.id", ondelete="RESTRICT"))
 
-    servico: Mapped[list["AtendimentoServico"]] = relationship(back_populates="atendimento", cascade="all, delete-orphan")
-
+    animal: Mapped["Animal"] = relationship()
+    veterinario: Mapped["Veterinario"] = relationship()
+    servicos: Mapped[list["AtendimentoServico"]] = relationship(
+        back_populates="atendimento", cascade="all, delete-orphan"
+    )
 
 class AtendimentoServico(Base):
     __tablename__ = "atendimentos_servicos"
@@ -25,8 +28,9 @@ class AtendimentoServico(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     quantidade: Mapped[int] = mapped_column(default=1)
     valor_cobrado: Mapped[float] = mapped_column(Numeric(10, 2))
- 
+
     atendimento_id: Mapped[int] = mapped_column(ForeignKey("atendimentos.id", ondelete="CASCADE"), index=True)
     servico_id: Mapped[int] = mapped_column(ForeignKey("servicos.id", ondelete="RESTRICT"), index=True)
 
-    atendimento: Mapped["Atendimento"] = relationship(back_populates="servico")
+    atendimento: Mapped["Atendimento"] = relationship(back_populates="servicos")
+    servico: Mapped["Servico"] = relationship()

@@ -1,9 +1,9 @@
-"""Povoamento inicial do banco (F16).
+﻿"""Povoamento inicial do banco (F16).
 
 Uso, na raiz do projeto e com o .venv ativo:
     python seed.py
 
-Só insere dados se o banco estiver vazio; rodar de novo não duplica nada.
+SÃ³ insere dados se o banco estiver vazio; rodar de novo nÃ£o duplica nada.
 Funciona com PostgreSQL ou SQLite, conforme a DATABASE_URL do .env.
 """
 from datetime import date, datetime, time, timedelta
@@ -28,14 +28,14 @@ from app.models import (
 
 
 def dias(n: int) -> date:
-    """Data de n dias atrás (n negativo = n dias no futuro)."""
+    """Data de n dias atrÃ¡s (n negativo = n dias no futuro)."""
     return date.today() - timedelta(days=n)
 
 
 # nome, telefone, email, ativo
 TUTORES = [
     ("Maria Oliveira", "88999010001", "maria.oliveira@example.com", True),
-    ("João Pereira", "88999010002", "joao.pereira@example.com", True),
+    ("JoÃ£o Pereira", "88999010002", "joao.pereira@example.com", True),
     ("Ana Souza", "88999010003", "ana.souza@example.com", True),
     ("Carlos Lima", "88999010004", "carlos.lima@example.com", True),
     ("Fernanda Costa", "88999010005", "fernanda.costa@example.com", True),
@@ -46,63 +46,63 @@ TUTORES = [
 
 # nome, crmv, especialidade, ativo
 VETERINARIOS = [
-    ("Dra. Helena Martins", "CRMV-CE 1001", "Clínica Geral", True),
+    ("Dra. Helena Martins", "CRMV-CE 1001", "ClÃ­nica Geral", True),
     ("Dr. Rafael Torres", "CRMV-CE 1002", "Cirurgia", True),
     ("Dra. Camila Duarte", "CRMV-CE 1003", "Dermatologia", True),
     ("Dr. Marcelo Freitas", "CRMV-CE 1004", "Animais Silvestres", True),
-    ("Dra. Juliana Prado", "CRMV-CE 1005", "Clínica Geral", False),
+    ("Dra. Juliana Prado", "CRMV-CE 1005", "ClÃ­nica Geral", False),
 ]
 
 # nome, valor_padrao, ativo
 SERVICOS = [
-    ("Consulta clínica", "120.00", True),
+    ("Consulta clÃ­nica", "120.00", True),
     ("Exame de sangue", "95.00", True),
     ("Ultrassonografia", "180.00", True),
     ("Raio-X", "140.00", True),
-    ("Limpeza de tártaro", "250.00", True),
-    ("Castração", "450.00", True),
-    ("Banho e tosa higiênica", "70.00", True),
+    ("Limpeza de tÃ¡rtaro", "250.00", True),
+    ("CastraÃ§Ã£o", "450.00", True),
+    ("Banho e tosa higiÃªnica", "70.00", True),
     ("Consulta domiciliar", "200.00", False),
 ]
 
 # nome, fabricante, dias_reforco
 VACINAS = [
-    ("Antirrábica", "Zoetis", 365),
-    ("V10 (Múltipla Canina)", "MSD Saúde Animal", 21),
-    ("V4 (Quádrupla Felina)", "MSD Saúde Animal", 21),
-    ("Giárdia", "Zoetis", 21),  # fica no catálogo sem nenhuma aplicação
+    ("AntirrÃ¡bica", "Zoetis", 365),
+    ("V10 (MÃºltipla Canina)", "MSD SaÃºde Animal", 21),
+    ("V4 (QuÃ¡drupla Felina)", "MSD SaÃºde Animal", 21),
+    ("GiÃ¡rdia", "Zoetis", 21),  # fica no catÃ¡logo sem nenhuma aplicaÃ§Ã£o
 ]
 
-# nome, espécie, raça, sexo, nascimento, peso_kg, índice do tutor inicial, ativo
+# nome, espÃ©cie, raÃ§a, sexo, nascimento, peso_kg, Ã­ndice do tutor inicial, ativo
 ANIMAIS = [
     ("Thor", "Cachorro", "Labrador", "M", date(2020, 3, 10), 32.5, 0, True),
-    ("Mia", "Gato", "Siamês", "F", date(2021, 7, 1), 4.2, 0, True),
+    ("Mia", "Gato", "SiamÃªs", "F", date(2021, 7, 1), 4.2, 0, True),
     ("Bob", "Cachorro", "Poodle", "M", date(2019, 11, 20), 7.8, 1, True),
     ("Luna", "Gato", "Persa", "F", date(2022, 2, 14), 3.9, 1, True),
     ("Nina", "Cachorro", "Vira-lata", "F", date(2018, 5, 5), 14.0, 2, True),
     ("Simba", "Gato", "Maine Coon", "M", date(2023, 1, 15), 5.1, 2, True),
-    ("Rex", "Cachorro", "Pastor Alemão", "M", date(2017, 9, 9), 38.0, 3, True),
+    ("Rex", "Cachorro", "Pastor AlemÃ£o", "M", date(2017, 9, 9), 38.0, 3, True),
     ("Mel", "Cachorro", "Golden Retriever", "F", date(2021, 12, 1), 27.3, 3, True),
     ("Pipoca", "Coelho", "Mini Lop", "F", date(2023, 6, 10), 1.6, 4, True),
     ("Tobby", "Cachorro", "Beagle", "M", date(2022, 8, 18), 11.2, 4, True),
     ("Cleo", "Gato", "SRD", "F", date(2020, 10, 30), 4.5, 5, True),
     ("Zeca", "Cachorro", "Shih Tzu", "M", date(2019, 4, 22), 6.9, 5, True),
     ("Amora", "Gato", "Bengal", "F", date(2024, 3, 3), 3.2, 6, True),
-    ("Fred", "Cachorro", "Bulldog Francês", "M", date(2021, 5, 25), 12.4, 6, False),
+    ("Fred", "Cachorro", "Bulldog FrancÃªs", "M", date(2021, 5, 25), 12.4, 6, False),
 ]
 
-# índices dos animais que recebem microchip (os demais ficam sem, para testar o 404)
+# Ã­ndices dos animais que recebem microchip (os demais ficam sem, para testar o 404)
 MICROCHIPS = [0, 1, 2, 3, 4, 5, 6, 7, 9, 10]
 
-# índice do animal, índice do novo tutor, dias atrás, motivo
+# Ã­ndice do animal, Ã­ndice do novo tutor, dias atrÃ¡s, motivo
 TRANSFERENCIAS = [
-    (2, 4, 45, "transferencia"),  # Bob: João -> Fernanda
+    (2, 4, 45, "transferencia"),  # Bob: JoÃ£o -> Fernanda
     (6, 2, 90, "adocao"),         # Rex: Carlos -> Ana
     (10, 6, 30, "adocao"),        # Cleo: Paulo -> Beatriz
 ]
 
-# animal, vacina, dose, status, dias, veterinário
-#   status "aplicada": dias = dias atrás
+# animal, vacina, dose, status, dias, veterinÃ¡rio
+#   status "aplicada": dias = dias atrÃ¡s
 #   status "prevista": dias = dias a partir de hoje (negativo = atrasada)
 APLICACOES = [
     (0, 0, 1, "aplicada", 200, 0), (0, 0, 2, "prevista", 165, None),
@@ -119,25 +119,25 @@ APLICACOES = [
     (9, 0, 1, "prevista", 7, None),
 ]
 
-# animal, veterinário, dias atrás, situação, orientações, índices dos serviços
+# animal, veterinÃ¡rio, dias atrÃ¡s, situaÃ§Ã£o, orientaÃ§Ãµes, Ã­ndices dos serviÃ§os
 ATENDIMENTOS = [
-    (2, 0, 70, "Coceira intensa e vermelhidão", "Evitar banhos por 5 dias", [0]),
-    (2, 2, 20, "Retorno de dermatite", "Manter medicação por 7 dias", [0, 1]),
-    (6, 1, 120, "Claudicação na pata traseira", "Repouso por 10 dias", [0, 3]),
+    (2, 0, 70, "Coceira intensa e vermelhidÃ£o", "Evitar banhos por 5 dias", [0]),
+    (2, 2, 20, "Retorno de dermatite", "Manter medicaÃ§Ã£o por 7 dias", [0, 1]),
+    (6, 1, 120, "ClaudicaÃ§Ã£o na pata traseira", "Repouso por 10 dias", [0, 3]),
     (6, 0, 30, "Check-up geral", "Dieta para controle de peso", [0, 1]),
-    (10, 0, 50, "Vômitos recorrentes", "Alimentação leve e hidratação", [0, 1, 2]),
-    (10, 0, 10, "Retorno gastrointestinal", "Retomar a ração gradualmente", [0]),
-    (0, 0, 14, "Consulta de rotina", "Manter a vacinação em dia", [0]),
+    (10, 0, 50, "VÃ´mitos recorrentes", "AlimentaÃ§Ã£o leve e hidrataÃ§Ã£o", [0, 1, 2]),
+    (10, 0, 10, "Retorno gastrointestinal", "Retomar a raÃ§Ã£o gradualmente", [0]),
+    (0, 0, 14, "Consulta de rotina", "Manter a vacinaÃ§Ã£o em dia", [0]),
     (1, 0, 8, "Perda de apetite", "Observar por 48 horas", [0, 1]),
-    (3, 2, 3, "Queda de pelos", "Suplementação indicada", [0, 1]),
-    (4, 1, 45, "Tártaro e mau hálito", "Escovação dental diária", [0, 4]),
-    (5, 0, 12, "Consulta de filhote", "Vermifugação em 15 dias", [0]),
-    (7, 1, 33, "Castração eletiva", "Repouso e colar elisabetano", [0, 5]),
-    (8, 3, 18, "Avaliação de coelho", "Feno à vontade", [0]),
-    (9, 0, 6, "Otite", "Limpeza do ouvido diária", [0]),
+    (3, 2, 3, "Queda de pelos", "SuplementaÃ§Ã£o indicada", [0, 1]),
+    (4, 1, 45, "TÃ¡rtaro e mau hÃ¡lito", "EscovaÃ§Ã£o dental diÃ¡ria", [0, 4]),
+    (5, 0, 12, "Consulta de filhote", "VermifugaÃ§Ã£o em 15 dias", [0]),
+    (7, 1, 33, "CastraÃ§Ã£o eletiva", "Repouso e colar elisabetano", [0, 5]),
+    (8, 3, 18, "AvaliaÃ§Ã£o de coelho", "Feno Ã  vontade", [0]),
+    (9, 0, 6, "Otite", "Limpeza do ouvido diÃ¡ria", [0]),
     (11, 2, 27, "Alergia de pele", "Shampoo medicado", [0, 6]),
-    (13, 4, 80, "Dificuldade respiratória", "Evitar calor e exercício", [0, 3]),
-    (12, 0, 2, "Primeira consulta", "Agendar vacinação", [0]),
+    (13, 4, 80, "Dificuldade respiratÃ³ria", "Evitar calor e exercÃ­cio", [0, 3]),
+    (12, 0, 2, "Primeira consulta", "Agendar vacinaÃ§Ã£o", [0]),
 ]
 
 
@@ -176,7 +176,7 @@ def popular(db: Session) -> None:
     db.add_all(animais)
     db.flush()
 
-    # Primeiro vínculo de tutela de cada animal
+    # Primeiro vÃ­nculo de tutela de cada animal
     vinculos: dict[int, list[HistoricoTutela]] = {}
     for i, animal in enumerate(animais):
         v = HistoricoTutela(
@@ -186,7 +186,7 @@ def popular(db: Session) -> None:
         db.add(v)
     db.flush()
 
-    # Transferências: fecha o vínculo vigente e abre o novo
+    # TransferÃªncias: fecha o vÃ­nculo vigente e abre o novo
     for i, novo_tutor_i, atras, motivo in TRANSFERENCIAS:
         data_transf = dias(atras)
         vinculos[i][-1].data_fim = data_transf
@@ -201,7 +201,7 @@ def popular(db: Session) -> None:
 
     for n, i in enumerate(MICROCHIPS, start=1):
         db.add(Microchip(
-            numero=f"98511200000{n:04d}",  # 15 dígitos
+            numero=f"98511200000{n:04d}",  # 15 dÃ­gitos
             data_implantacao=dias(200 + n * 5),
             animal=animais[i],
         ))
@@ -230,7 +230,7 @@ def popular(db: Session) -> None:
             animal_id=animais[animal_i].id,
             veterinario_id=veterinarios[vet_i].id,
             tutor_id_epoca=tutor_da_epoca(vinculos[animal_i], data),
-            servico=[
+            servicos=[
                 AtendimentoServico(
                     servico_id=servicos[s].id,
                     quantidade=1,
@@ -244,12 +244,12 @@ def popular(db: Session) -> None:
 def main() -> None:
     with SessionLocal() as db:
         if db.scalar(select(func.count()).select_from(Tutor)):
-            print("O banco já possui dados; nada foi inserido.")
+            print("O banco jÃ¡ possui dados; nada foi inserido.")
             return
         popular(db)
         db.commit()
 
-        print("Povoamento concluído:")
+        print("Povoamento concluÃ­do:")
         for modelo in (
             Tutor, Veterinario, Animal, Microchip, HistoricoTutela, Servico,
             Vacina, AplicacaoVacina, Atendimento, AtendimentoServico,
