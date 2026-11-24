@@ -18,78 +18,81 @@ def obter_historico_completo_animal(
     animal_id: int,
     db: Session = Depends(get_db),
 ):
-    animal = db.scalar(select(Animal).where(Animal.id == animal_id))
+    animal = db.get(Animal, animal_id)
     if not animal:
-        raise HTTPException(
-            status_code=404, detail="Animal não encontrado"
-        )
+        raise HTTPException(status_code=404, detail="Animal não encontrado")
 
-    atendimentos = (
-        db.scalars(
-            select(Atendimento)
-            .options(selectinload(Atendimento.servicos))
-            .where(Atendimento.animal_id == animal_id)
-            .order_by(Atendimento.data_hora.desc())
+    atendimentos = db.scalars(
+        select(Atendimento)
+        .options(
+            selectinload(Atendimento.servicos).selectinload(AtendimentoServico.servico),
+            selectinload(Atendimento.veterinario),
         )
-        .all()
-    )
+        .where(Atendimento.animal_id == animal_id)
+        .order_by(Atendimento.data_hora.desc())
+    ).all()
 
-    historico_vacinas = db.execute(
-       select(AplicacaoVacina, Vacina.nome.label("vacina_nome"))
+    aplicacoes = db.execute(
+        select(AplicacaoVacina, Vacina.nome, Veterinario.nome)
         .join(Vacina, AplicacaoVacina.vacina_id == Vacina.id)
+        .outerjoin(Veterinario, AplicacaoVacina.veterinario_id == Veterinario.id)
         .where(AplicacaoVacina.animal_id == animal_id)
         .order_by(AplicacaoVacina.data_prevista.desc())
-    
-        .all()
-    )
+    ).all()
 
-    servicos_dict = {s.id: s.nome for s in db.scalars(select(Servico)).all()}
-
-    historico_atendimento = []
-
+    historico_atendimentos = []
     for at in atendimentos:
-        itens_formatados = [
+        itens = [
             {
                 "servico_id": item.servico_id,
-                "servico_nome": servicos_dict.get(item.servico_id, "Serviço"),
+                "servico": item.servico.nome,
                 "quantidade": item.quantidade,
                 "valor_cobrado": float(item.valor_cobrado),
                 "subtotal": float(item.quantidade * item.valor_cobrado),
-
             }
             for item in at.servicos
         ]
-        historico_atendimento.append(
+        historico_atendimentos.append(
             {
-                "atencimento_id": at.id,
+                "atendimento_id": at.id,
                 "data_hora": at.data_hora,
                 "situacao": at.situacao,
                 "orientacoes": at.orientacoes,
-                "veterinario_id": at.veterinario_id,
+                "veterinario": {"id": at.veterinario_id, "nome": at.veterinario.nome},
                 "tutor_id_epoca": at.tutor_id_epoca,
-                "procedimentos_realizados": itens_formatados
+                "servicos": itens,
+                "total": sum(i["subtotal"] for i in itens),
             }
         )
 
-        historico_vacinas = [
-            {
-                "aplicacao_id": ap.id,
-                "vacina_id": ap.vacina_id
-            } for ap, vacina_nome in historico_vacinas
-        ]
+    aplicadas, previstas = [], []
+    for ap, vacina_nome, vet_nome in aplicacoes:
+        registro = {
+            "aplicacao_id": ap.id,
+            "vacina_id": ap.vacina_id,
+            "vacina": vacina_nome,
+            "dose": ap.dose,
+            "data_prevista": ap.data_prevista,
+            "data_aplicacao": ap.data_aplicacao,
+            "veterinario": vet_nome,
+        }
+        (aplicadas if ap.status == "aplicada" else previstas).append(registro)
 
     return {
-        
         "animal": {
             "id": animal.id,
             "nome": animal.nome,
-            "especie": getattr(animal, "especie", None),
-            "raca": getattr(animal, "raca", None),
+            "especie": animal.especie,
+            "raca": animal.raca,
         },
-        "total_atendimentos": len(historico_atendimento),
-        "atendimentos": atendimentos,
-        "total_registro_vacinacao": len(historico_vacinas),
-        "vacinacao": historico_vacinas,
+        "total_atendimentos": len(historico_atendimentos),
+        "atendimentos": historico_atendimentos,
+        "vacinacao": {
+            "total_aplicadas": len(aplicadas),
+            "total_previstas": len(previstas),
+            "aplicadas": aplicadas,
+            "previstas": previstas,
+        },
     }
 
 
