@@ -43,14 +43,6 @@ class AplicacaoVacinaEntrada(BaseModel):
         if self.status == "prevista" and self.data_aplicacao is not None:
             raise ValueError("A data de aplicação não deve ser fornecida quando o status for 'prevista'.")
         return self
-    
-    @model_validator(mode="after")
-    def nao_permitir_nulos_obrigatorios(self):
-        enviados = self.model_dump(exclude_unset=True)
-        for campo in ("dose", "data_prevista", "status"):
-            if campo in enviados and enviados[campo] is None:
-                raise ValueError(f"O campo '{campo}' não aceita nulo")
-        return self
 
 
 class AplicacaoVacinaAtualizacao(BaseModel):
@@ -59,6 +51,14 @@ class AplicacaoVacinaAtualizacao(BaseModel):
     data_aplicacao: Optional[date] = None
     status: Optional[Literal["prevista", "aplicada"]] = None
     veterinario_id: Optional[int] = None
+
+    @model_validator(mode="after")
+    def nao_permitir_nulos_obrigatorios(self):
+        enviados = self.model_dump(exclude_unset=True)
+        for campo in ("dose", "data_prevista", "status"):
+            if campo in enviados and enviados[campo] is None:
+                raise ValueError(f"O campo '{campo}' não aceita nulo")
+        return self
 
 class AplicacaoVacinaSaida(BaseModel):
     model_config = ConfigDict(from_attributes=True)
