@@ -4,8 +4,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 class VacinaEntrada(BaseModel):
     nome: str = Field(min_length=2, max_length=120)
-    fabricante: Optional[str] = Field(default=None, max_length=120)
-    dias_reforco: Optional[int] = Field(default=None, ge=0)
+    fabricante: str = Field(min_length=2, max_length=120)
+    dias_reforco: int = Field(ge=0)
     ativo: bool = True
 
 class VacinaAtualizacao(BaseModel):
@@ -14,13 +14,18 @@ class VacinaAtualizacao(BaseModel):
     dias_reforco: Optional[int] = Field(default=None, ge=0)
     ativo: Optional[bool] = None
 
+    @model_validator(mode="after")
+    def nao_permitir_nulos(self):
+        if any(v is None for v in self.model_dump(exclude_unset=True).values()):
+            raise ValueError("Não envie campos nulos")
+        return self
+
 class VacinaSaida(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-
     id: int
     nome: str
-    fabricante: Optional[str]
-    dias_reforco: Optional[int]
+    fabricante: str
+    dias_reforco: int
     ativo: bool
 
 class AplicacaoVacinaEntrada(BaseModel):
@@ -37,6 +42,14 @@ class AplicacaoVacinaEntrada(BaseModel):
             raise ValueError("A data de aplicação deve ser fornecida quando o status for 'aplicada'.")
         if self.status == "prevista" and self.data_aplicacao is not None:
             raise ValueError("A data de aplicação não deve ser fornecida quando o status for 'prevista'.")
+        return self
+    
+    @model_validator(mode="after")
+    def nao_permitir_nulos_obrigatorios(self):
+        enviados = self.model_dump(exclude_unset=True)
+        for campo in ("dose", "data_prevista", "status"):
+            if campo in enviados and enviados[campo] is None:
+                raise ValueError(f"O campo '{campo}' não aceita nulo")
         return self
 
 

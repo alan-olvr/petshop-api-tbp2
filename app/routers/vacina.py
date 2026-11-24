@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.models.veterinario import Veterinario
 from app.database import get_db
 from app.models.animal import Animal
 from app.models.vacina import AplicacaoVacina, Vacina
@@ -206,12 +207,36 @@ def atualizar_aplicacao_vacina(
 
     campos = dados.model_dump(exclude_unset=True)
 
-    nova_data = campos.get("data_aplicacao")
-    if nova_data and nova_data > date.today():
+    # Estado final do registro, misturando o que já existe com o que está sendo enviado
+    status_final = campos.get("status", aplicacao.status)
+    data_final = campos.get("data_aplicacao", aplicacao.data_aplicacao)
+
+    if status_final == "aplicada" and data_final is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uma vacina aplicada precisa ter data_aplicacao."
+        )
+    if status_final == "prevista" and data_final is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uma vacina prevista não pode ter data_aplicacao."
+        )
+    if data_final is not None and data_final > date.today():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="A data de aplicação não pode ser no futuro."
         )
+
+    vet_id = campos.get("veterinario_id")
+    if vet_id is not None:
+        vet = db.get(Veterinario, vet_id)
+        if not vet:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Veterinário não encontrado.")
+        if not vet.ativo:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Veterinário inativo não pode ser vinculado à vacinação."
+            )
 
     for campo, valor in campos.items():
         setattr(aplicacao, campo, valor)
