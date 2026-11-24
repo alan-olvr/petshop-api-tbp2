@@ -20,7 +20,6 @@ class AtendimentoEntrada(BaseModel):
     orientacoes: Optional[str] = Field(default=None, max_length=500)
     animal_id: int
     veterinario_id: int
-    tutor_id_epoca: int
     servicos: list[AtendimentoServicoEntrada] = Field(min_length=1)
 
 class AtendimentoSaida(BaseModel):

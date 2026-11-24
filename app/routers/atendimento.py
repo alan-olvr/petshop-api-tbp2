@@ -8,7 +8,6 @@ from app.database import get_db
 from app.models.animal import Animal
 from app.models.atendimento import Atendimento, AtendimentoServico
 from app.models.servico import Servico
-from app.models.tutor import Tutor
 from app.models.veterinario import Veterinario
 from app.schemas.atendimento import (
     AtendimentoAtualizacao,
@@ -31,12 +30,7 @@ def criar_atendimento(dados: AtendimentoEntrada, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST, detail="Não é permitido agendar atendimento para animal inativo."
         )
 
-    tutor = db.scalar(select(Tutor).where(Tutor.id == dados.tutor_id_epoca))
-    if not tutor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Tutor não encontrado"
-        )
-    if hasattr(tutor, "ativo") and not tutor.ativo:
+    if not animal.tutor.ativo:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Não é permitido agendar atendimento para tutor inativo."
         )
@@ -56,7 +50,7 @@ def criar_atendimento(dados: AtendimentoEntrada, db: Session = Depends(get_db)):
         orientacoes=dados.orientacoes,
         animal_id=dados.animal_id,
         veterinario_id=dados.veterinario_id,
-        tutor_id_epoca=dados.tutor_id_epoca,
+        tutor_id_epoca=animal.tutor_id,
     )
     db.add(novo_atendimento)
     db.flush() 
@@ -102,8 +96,6 @@ def listar_atendimentos(
         query = query.where(Atendimento.animal_id == animal_id)
     if veterinario_id:
         query = query.where(Atendimento.veterinario_id == veterinario_id)
-    if veterinario_id:
-        query = query.where(Atendimento.tutor_id_epoca == veterinario_id)
 
     return db.scalars(query).all()
 
@@ -148,7 +140,7 @@ def deletar_atedimento(atendimento_id: int, db: Session = Depends(get_db)):
     db.delete(atendimento)
     db.commit()
 
-@router.get("/atendimentos/{atendimento_id}/servicos", response_model=list[AtendimentoSaida])
+@router.get("/animais/{animal_id}/atendimentos", response_model=list[AtendimentoSaida])
 def listar_atendimentos_do_animal(animal_id: int, db: Session = Depends(get_db)):
     animal = db.scalar(select(Animal).where(Animal.id == animal_id))
     if not animal:
