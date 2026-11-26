@@ -15,13 +15,13 @@ from app.routers import (
 app = FastAPI(title="PetShop API")
 register_error_handlers(app)
 
-# Membro A
+
 app.include_router(tutor.router)
 app.include_router(animal.router)
 app.include_router(microchip.router)
 app.include_router(veterinario.router)
 
-# Membro B
+
 app.include_router(servico.router)
 app.include_router(vacina.router)
 app.include_router(atendimento.router)

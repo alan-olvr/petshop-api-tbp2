@@ -1,12 +1,4 @@
-﻿"""Povoamento inicial do banco (F16).
-
-Uso, na raiz do projeto e com o .venv ativo:
-    python seed.py
-
-SÃ³ insere dados se o banco estiver vazio; rodar de novo nÃ£o duplica nada.
-Funciona com PostgreSQL ou SQLite, conforme a DATABASE_URL do .env.
-"""
-from datetime import date, datetime, time, timedelta
+﻿from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 
 from sqlalchemy import func, select
@@ -28,11 +20,11 @@ from app.models import (
 
 
 def dias(n: int) -> date:
-    """Data de n dias atrÃ¡s (n negativo = n dias no futuro)."""
+   
     return date.today() - timedelta(days=n)
 
 
-# nome, telefone, email, ativo
+
 TUTORES = [
     ("Maria Oliveira", "88999010001", "maria.oliveira@example.com", True),
     ("JoÃ£o Pereira", "88999010002", "joao.pereira@example.com", True),
@@ -44,7 +36,7 @@ TUTORES = [
     ("Ricardo Mendes", "88999010008", "ricardo.mendes@example.com", False),
 ]
 
-# nome, crmv, especialidade, ativo
+
 VETERINARIOS = [
     ("Dra. Helena Martins", "CRMV-CE 1001", "ClÃ­nica Geral", True),
     ("Dr. Rafael Torres", "CRMV-CE 1002", "Cirurgia", True),
@@ -53,7 +45,7 @@ VETERINARIOS = [
     ("Dra. Juliana Prado", "CRMV-CE 1005", "ClÃ­nica Geral", False),
 ]
 
-# nome, valor_padrao, ativo
+
 SERVICOS = [
     ("Consulta clÃ­nica", "120.00", True),
     ("Exame de sangue", "95.00", True),
@@ -65,7 +57,7 @@ SERVICOS = [
     ("Consulta domiciliar", "200.00", False),
 ]
 
-# nome, fabricante, dias_reforco
+
 VACINAS = [
     ("AntirrÃ¡bica", "Zoetis", 365),
     ("V10 (MÃºltipla Canina)", "MSD SaÃºde Animal", 21),
@@ -73,7 +65,7 @@ VACINAS = [
     ("GiÃ¡rdia", "Zoetis", 21),  # fica no catÃ¡logo sem nenhuma aplicaÃ§Ã£o
 ]
 
-# nome, espÃ©cie, raÃ§a, sexo, nascimento, peso_kg, Ã­ndice do tutor inicial, ativo
+
 ANIMAIS = [
     ("Thor", "Cachorro", "Labrador", "M", date(2020, 3, 10), 32.5, 0, True),
     ("Mia", "Gato", "SiamÃªs", "F", date(2021, 7, 1), 4.2, 0, True),
@@ -91,19 +83,18 @@ ANIMAIS = [
     ("Fred", "Cachorro", "Bulldog FrancÃªs", "M", date(2021, 5, 25), 12.4, 6, False),
 ]
 
-# Ã­ndices dos animais que recebem microchip (os demais ficam sem, para testar o 404)
+
 MICROCHIPS = [0, 1, 2, 3, 4, 5, 6, 7, 9, 10]
 
-# Ã­ndice do animal, Ã­ndice do novo tutor, dias atrÃ¡s, motivo
+
 TRANSFERENCIAS = [
-    (2, 4, 45, "transferencia"),  # Bob: JoÃ£o -> Fernanda
-    (6, 2, 90, "adocao"),         # Rex: Carlos -> Ana
-    (10, 6, 30, "adocao"),        # Cleo: Paulo -> Beatriz
+    (2, 4, 45, "transferencia"),  
+    (6, 2, 90, "adocao"),        
+    (10, 6, 30, "adocao"),       
 ]
 
-# animal, vacina, dose, status, dias, veterinÃ¡rio
-#   status "aplicada": dias = dias atrÃ¡s
-#   status "prevista": dias = dias a partir de hoje (negativo = atrasada)
+
+
 APLICACOES = [
     (0, 0, 1, "aplicada", 200, 0), (0, 0, 2, "prevista", 165, None),
     (0, 1, 1, "aplicada", 150, 0), (0, 1, 2, "aplicada", 120, 0),
@@ -119,7 +110,7 @@ APLICACOES = [
     (9, 0, 1, "prevista", 7, None),
 ]
 
-# animal, veterinÃ¡rio, dias atrÃ¡s, situaÃ§Ã£o, orientaÃ§Ãµes, Ã­ndices dos serviÃ§os
+
 ATENDIMENTOS = [
     (2, 0, 70, "Coceira intensa e vermelhidÃ£o", "Evitar banhos por 5 dias", [0]),
     (2, 2, 20, "Retorno de dermatite", "Manter medicaÃ§Ã£o por 7 dias", [0, 1]),

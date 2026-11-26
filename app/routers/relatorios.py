@@ -174,21 +174,21 @@ def relatorio_animais_sem_vacina_aplicada(db: Session = Depends(get_db)):
 
 @router.get("/estatisticas")
 def obter_estatisticas(db: Session = Depends(get_db)):
-    # 1. Atendimentos por veterinário
+    
     atend_vet = db.execute(
         select(Veterinario.nome, func.count(Atendimento.id).label("total"))
         .join(Atendimento, Veterinario.id == Atendimento.veterinario_id)
         .group_by(Veterinario.id, Veterinario.nome)
     ).all()
 
-    # 2. Atendimentos por espécie
+  
     atend_especie = db.execute(
         select(Animal.especie, func.count(Atendimento.id).label("total"))
         .join(Atendimento, Animal.id == Atendimento.animal_id)
         .group_by(Animal.especie)
     ).all()
 
-    # 3. Faturamento por serviço
+   
     fat_servico = db.execute(
         select(
             Servico.nome,
@@ -198,7 +198,7 @@ def obter_estatisticas(db: Session = Depends(get_db)):
         .group_by(Servico.id, Servico.nome)
     ).all()
 
-    # 4. Vacinas por status (Prevista vs Aplicada)
+    
     vacinas_status = db.execute(
         select(AplicacaoVacina.status, func.count(AplicacaoVacina.id).label("total"))
         .group_by(AplicacaoVacina.status)

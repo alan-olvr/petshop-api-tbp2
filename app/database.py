@@ -12,7 +12,7 @@ engine = create_engine(
 )
 
 if _is_sqlite:
-    # SQLite não aplica chaves estrangeiras por padrão (Aula 14).
+   
     @event.listens_for(engine, "connect")
     def _enable_sqlite_fk(dbapi_connection, _record):
         cursor = dbapi_connection.cursor()

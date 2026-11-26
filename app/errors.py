@@ -1,5 +1,3 @@
-"""Tratamento global de erros (F18).
-Nunca expor mensagens internas do SGBD ao cliente."""
 import logging
 
 from fastapi import FastAPI, Request
@@ -10,7 +8,7 @@ log = logging.getLogger("petshop")
 
 
 class RegraNegocioError(Exception):
-    """Violação de regra de negócio (retorna 409 ou 400)."""
+   
 
     def __init__(self, mensagem: str, status_code: int = 409):
         super().__init__(mensagem)

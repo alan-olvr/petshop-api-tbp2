@@ -86,7 +86,7 @@ def deletar_vacina(vacina_id: int, db: Session = Depends(get_db)):
         )
 
 
-# F17: Doses futuras previstas
+
 @router.get("/vacinacoes/pendentes", response_model=list[AplicacaoVacinaSaida])
 def listar_vacinacoes_pendentes(
     animal_id: Optional[int] = Query(None, description="Filtrar pendências de um animal específico"),
@@ -120,10 +120,10 @@ def listar_vacinacoes(
     return db.scalars(query).all()
 
 
-# F13: Registro de aplicação com regras de negócio
+
 @router.post("/vacinacoes", response_model=AplicacaoVacinaSaida, status_code=status.HTTP_201_CREATED)
 def registrar_aplicacao_vacina(dados: AplicacaoVacinaEntrada, db: Session = Depends(get_db)):
-    # 1. Validar existência e status ativo do Animal e da Vacina
+   
     animal = db.scalar(select(Animal).where(Animal.id == dados.animal_id))
     if not animal:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Animal não encontrado.")
@@ -142,14 +142,14 @@ def registrar_aplicacao_vacina(dados: AplicacaoVacinaEntrada, db: Session = Depe
             detail="Esta vacina está inativa no catálogo."
         )
 
-    # 2. REGRA F13: Não permitir data_aplicacao no futuro
+  
     if dados.data_aplicacao and dados.data_aplicacao > date.today():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="A data de aplicação não pode ser uma data futura."
         )
 
-    # 3. REGRA F13: Não registrar a mesma dose da mesma vacina duas vezes para um animal
+  
     dose_existente = db.scalar(
         select(AplicacaoVacina).where(
             AplicacaoVacina.animal_id == dados.animal_id,
@@ -163,7 +163,7 @@ def registrar_aplicacao_vacina(dados: AplicacaoVacinaEntrada, db: Session = Depe
             detail=f"A dose {dados.dose} da vacina '{vacina.nome}' já está registrada para este animal."
         )
 
-    # 4. REGRA F13: Respeitar o intervalo mínimo antes de aplicar o reforço
+    
     if dados.dose > 1 and vacina.dias_reforco:
         dose_anterior = db.scalar(
             select(AplicacaoVacina).where(
@@ -194,7 +194,7 @@ def registrar_aplicacao_vacina(dados: AplicacaoVacinaEntrada, db: Session = Depe
     return nova_aplicacao
 
 
-# Dar baixa em uma dose "prevista" para "aplicada"
+
 @router.patch("/vacinacoes/{aplicacao_id}", response_model=AplicacaoVacinaSaida)
 def atualizar_aplicacao_vacina(
     aplicacao_id: int,
